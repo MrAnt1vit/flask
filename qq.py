@@ -43,11 +43,11 @@ def register():
         return render_template('register.html', form=form)
 
 
-@app.route('/jobs', methods=['GET', 'POST'])
+@app.route('/addjob', methods=['GET', 'POST'])
 def new_job():
     form = JobsForm()
     if request.method == 'GET':
-        return render_template('jobs.html', form=form)
+        return render_template('addjob.html', form=form)
     else:
         if form.validate_on_submit():
             db_sess = db_session.create_session()
@@ -61,7 +61,7 @@ def new_job():
             db_sess.add(Job)
             db_sess.commit()
             return redirect('/')
-        return render_template('jobs.html', form=form)
+        return render_template('addjob.html', form=form)
 
 
 @login_manager.user_loader
