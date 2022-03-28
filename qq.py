@@ -134,7 +134,7 @@ def new_job(team_leader, job, work_size, collaborators, start_date, is_finished)
 
 def main():
     db_session.global_init("db/mars_explorer.db")
-    # new_person('Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org')
+    # new_person('Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org') / пароль - aboba
     # new_person('Mark', 'Hunter', 24, 'colonist', 'electrician', 'module_1', 'm_hunter@mars.org')
     # new_person('Thomas', 'Fisher', 27, 'colonist', 'cook', 'module_2', 't_fisher@mars.org')
     # new_person('Wiliam', 'Wilson', 22, 'colonist', 'mechanic', 'module_2', 'w_w_w@mars.org')
@@ -142,6 +142,44 @@ def main():
     # new_job(2, 'exploration of mineral resourses', 15, '4, 3', datetime.datetime.now(), False)
     # new_job(3, 'development of a management system', 25, '5', datetime.datetime.now(), False)
     app.run(port=8080, host='0.0.0.0')
+
+
+@app.route('/edit_jobs/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(id):
+    form = JobsForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+        form.team_leader.data = job.team_leader
+        form.job.data = job.job
+        form.work_size.data = job.work_size
+        form.collaborators.data = job.collaborators
+        form.is_finished.data = job.is_finished
+        return render_template('addjob.html', form=form)
+    else:
+        if form.validate_on_submit():
+            db_sess = db_session.create_session()
+            job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+            job.team_leader = form.team_leader.data
+            job.job = form.job.data
+            job.work_size = form.work_size.data
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.is_finished.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            return render_template('addjob.html', form=form)
+
+
+@app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def job_delete(id):
+    db_sess = db_session.create_session()
+    job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+    db_sess.delete(job)
+    db_sess.commit()
+    return redirect('/')
 
 
 if __name__ == '__main__':
