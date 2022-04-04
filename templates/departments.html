@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <br>
+    <h2><center>List of Departments</center></h2>
+    {% if current_user.is_authenticated %}
+        <a href="/jobs" class="btn btn-secondary">Back to Jobs</a>
+        <a href="/adddepartment" class="btn btn-secondary">Add a Department</a>
+    {% endif %}
+    <br>
+    {% for item in departments %}
+    <br>
+    <h3>Department # {{item.id}}</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr class="table-secondary">
+                <th scope="col">Title of department</th>
+                <th scope="col">Chief</th>
+                <th scope="col">Members</th>
+                <th scope="col">Department email</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr class="table-info">
+                <td class="table-primary">{{item.title}}</td>
+                <td class="table-primary">{{leaders[loop.index0]}}</td>
+                <td class="table-primary">{{item.members}} hours</td>
+                <td class="table-primary">{{item.email}}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% if current_user.is_authenticated and (current_user == item.user or current_user.id == 1) %}
+        <div>
+            <a href="/edit_department/{{ item.id }}" class="btn btn-warning">
+                Изменить
+            </a>
+            <a href="/department_delete/{{ item.id }}" class="btn btn-danger">
+                Удалить
+            </a>
+        </div>
+    {% endif %}
+    {% endfor %}
+    <br>
+{% endblock %}
