@@ -49,22 +49,19 @@ def register():
 @app.route('/addjob', methods=['GET', 'POST'])
 def new_job():
     form = JobsForm()
-    if request.method == 'GET':
-        return render_template('addjob.html', form=form)
-    else:
-        if form.validate_on_submit():
-            db_sess = db_session.create_session()
-            Job = Jobs(
-                team_leader=form.team_leader.data,
-                job=form.job.data,
-                work_size=form.work_size.data,
-                collaborators=form.collaborators.data,
-                is_finished=form.is_finished.data,
-            )
-            db_sess.add(Job)
-            db_sess.commit()
-            return redirect('/')
-        return render_template('addjob.html', form=form)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        Job = Jobs(
+            team_leader=form.team_leader.data,
+            job=form.job.data,
+            work_size=form.work_size.data,
+            collaborators=form.collaborators.data,
+            is_finished=form.is_finished.data,
+        )
+        db_sess.add(Job)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('addjob.html', form=form)
 
 
 @app.route('/adddepartment', methods=['GET', 'POST'])
